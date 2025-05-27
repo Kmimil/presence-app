@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_DIR = 'presence-app-main/presence-app-main'
+        PROJECT_DIR = 'presence-app-main\\presence-app-main'
+        BUILD_DIR = 'presence-app-main\\presence-app-main\\.next'
         DEPLOY_DIR = 'C:\\deploy\\presence-app'
     }
 
@@ -25,15 +26,14 @@ pipeline {
             steps {
                 dir("${PROJECT_DIR}") {
                     bat 'npm run build'
+                    bat "dir \".next\" /a /s"
                 }
             }
         }
         
         stage('Check Build Output') {
             steps {
-                dir("${PROJECT_DIR}") {
-                    bat 'dir ".next" /a /s'
-                }
+                bat "dir \"${BUILD_DIR}\" /a /s"
             }
         }
 
@@ -41,7 +41,7 @@ pipeline {
             steps {
                 bat "if exist \"${DEPLOY_DIR}\" rmdir /s /q \"${DEPLOY_DIR}\""
                 bat "mkdir \"${DEPLOY_DIR}\""
-                bat "xcopy /s /e /y \"${env.WORKSPACE}\\${PROJECT_DIR}\\.next\\*\" \"${DEPLOY_DIR}\\\""
+                bat "xcopy /s /e /y \"${BUILD_DIR}\\*\" \"${DEPLOY_DIR}\\\""
             }
         }
     }
