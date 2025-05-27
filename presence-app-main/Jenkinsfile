@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_DIR = 'presence-app-main\\presence-app-main'
-        BUILD_DIR = "${env.WORKSPACE}\\presence-app-main\\presence-app-main\\.next"
+        PROJECT_DIR = 'presence-app-main/presence-app-main'
+        BUILD_DIR = 'presence-app-main/presence-app-main/.next'
         DEPLOY_DIR = 'C:\\deploy\\presence-app'
     }
 
@@ -30,15 +30,22 @@ pipeline {
             }
         }
 
+        stage('Debug List .next folder') {
+            steps {
+                // Liste tous les fichiers et dossiers dans .next
+                bat "dir \"${BUILD_DIR}\" /a /s"
+            }
+        }
+
         stage('Deploy') {
             steps {
-                // Supprimer l'ancien déploiement
                 bat "if exist \"${DEPLOY_DIR}\" rmdir /s /q \"${DEPLOY_DIR}\""
-                // Créer dossier de déploiement
                 bat "mkdir \"${DEPLOY_DIR}\""
-                // Copier le build
-                bat "xcopy /s /e /y "\"C:\Users\HP PAVILLON CORE I7\.jenkins\workspace\presence-app\presence-app-main\presence-app-main\.next\*\"" "C:\deploy\presence-app\"
-"
+
+                // Utilisation de PowerShell pour copier récursivement tout le contenu
+                bat """
+                powershell -command "Copy-Item -Path '${BUILD_DIR}\\\\*' -Destination '${DEPLOY_DIR}' -Recurse -Force"
+                """
             }
         }
     }
