@@ -29,23 +29,18 @@ pipeline {
                 }
             }
         }
-
-        stage('Debug List .next folder') {
+        
+        stage('Check Build Output') {
             steps {
-                // Liste tous les fichiers et dossiers dans .next
-                bat "dir \"${BUILD_DIR}\" /a /s"
+                bat "dir ${BUILD_DIR} /a /s"
             }
         }
 
         stage('Deploy') {
             steps {
-                bat "if exist \"${DEPLOY_DIR}\" rmdir /s /q \"${DEPLOY_DIR}\""
-                bat "mkdir \"${DEPLOY_DIR}\""
-
-                // Utilisation de PowerShell pour copier récursivement tout le contenu
-                bat """
-                powershell -command "Copy-Item -Path '${BUILD_DIR}\\\\*' -Destination '${DEPLOY_DIR}' -Recurse -Force"
-                """
+                bat "if exist \"%DEPLOY_DIR%\" rmdir /s /q \"%DEPLOY_DIR%\""
+                bat "mkdir \"%DEPLOY_DIR%\""
+                bat "xcopy /s /e /y \"${BUILD_DIR}\\*\" \"%DEPLOY_DIR%\\\""
             }
         }
     }
