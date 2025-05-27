@@ -37,7 +37,8 @@ pipeline {
                 // Créer dossier de déploiement
                 bat "mkdir \"${DEPLOY_DIR}\""
                 // Copier le build
-                bat "xcopy /s /e /y \"${BUILD_DIR}\\*\" \"${DEPLOY_DIR}\\\""
+                bat "xcopy /s /e /y "\"C:\Users\HP PAVILLON CORE I7\.jenkins\workspace\presence-app\presence-app-main\presence-app-main\.next\*\"" "C:\deploy\presence-app\"
+"
             }
         }
     }
