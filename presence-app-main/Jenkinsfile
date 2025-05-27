@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         PROJECT_DIR = 'presence-app-main/presence-app-main'
-        BUILD_DIR = 'presence-app-main/presence-app-main/.next'
         DEPLOY_DIR = 'C:\\deploy\\presence-app'
     }
 
@@ -32,15 +31,17 @@ pipeline {
         
         stage('Check Build Output') {
             steps {
-                bat "dir ${BUILD_DIR} /a /s"
+                dir("${PROJECT_DIR}") {
+                    bat 'dir ".next" /a /s'
+                }
             }
         }
 
         stage('Deploy') {
             steps {
-                bat "if exist \"%DEPLOY_DIR%\" rmdir /s /q \"%DEPLOY_DIR%\""
-                bat "mkdir \"%DEPLOY_DIR%\""
-                bat "xcopy /s /e /y \"${BUILD_DIR}\\*\" \"%DEPLOY_DIR%\\\""
+                bat "if exist \"${DEPLOY_DIR}\" rmdir /s /q \"${DEPLOY_DIR}\""
+                bat "mkdir \"${DEPLOY_DIR}\""
+                bat "xcopy /s /e /y \"${env.WORKSPACE}\\${PROJECT_DIR}\\.next\\*\" \"${DEPLOY_DIR}\\\""
             }
         }
     }
