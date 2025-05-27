@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        BUILD_DIR = 'build'
+        PROJECT_DIR = 'presence-app-main/presence-app-main'
+        BUILD_DIR = 'presence-app-main/presence-app-main/build'
         DEPLOY_DIR = 'C:\\deploy\\presence-app'
     }
 
@@ -15,13 +16,17 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                bat 'npm install --legacy-peer-deps'
+                dir("${PROJECT_DIR}") {
+                    bat 'npm install --legacy-peer-deps'
+                }
             }
         }
 
         stage('Build') {
             steps {
-                bat 'npm run build'
+                dir("${PROJECT_DIR}") {
+                    bat 'npm run build'
+                }
             }
         }
 
