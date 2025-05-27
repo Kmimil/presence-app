@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         PROJECT_DIR = 'presence-app-main/presence-app-main'
-        BUILD_DIR = 'presence-app-main/presence-app-main/.next'
+        BUILD_DIR = 'presence-app-main\\presence-app-main\\.next'
         DEPLOY_DIR = 'C:\\deploy\\presence-app'
     }
 
@@ -16,7 +16,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                dir("${PROJECT_DIR}") {
+                dir("${env.PROJECT_DIR}") {
                     bat 'npm install --legacy-peer-deps'
                 }
             }
@@ -24,7 +24,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                dir("${PROJECT_DIR}") {
+                dir("${env.PROJECT_DIR}") {
                     bat 'npm run build'
                 }
             }
@@ -32,11 +32,20 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                bat "if exist \"%DEPLOY_DIR%\" rmdir /s /q \"%DEPLOY_DIR%\""
-                bat "mkdir \"%DEPLOY_DIR%\""
-                bat "xcopy /s /e /y \"${BUILD_DIR}\\*\" \"%DEPLOY_DIR%\\\""
+                // Supprimer le dossier de déploiement s'il existe
+                bat "if exist \"${env.DEPLOY_DIR}\" rmdir /s /q \"${env.DEPLOY_DIR}\""
+                // Créer le dossier de déploiement
+                bat "mkdir \"${env.DEPLOY_DIR}\""
+                // Copier les fichiers du build
+                bat "xcopy /s /e /y \"${env.BUILD_DIR}\\*\" \"${env.DEPLOY_DIR}\\\""
             }
         }
+        stage('Verify Build Directory') {
+            steps {
+                bat "dir \"${env.BUILD_DIR}\""
+    }
+}
+
     }
 
     post {
